@@ -10,10 +10,19 @@ app.config['TEMPLATE_FOLDER'] = 'templates/'
 config = pdfkit.configuration(wkhtmltopdf=bytes(r'C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe', 'utf8'))
 @app.route('/convert', methods = ['POST'])
 def konversi():
-    args = request.form['xml']
-    # data=urllib.unquote(args.encode('utf-8')).decode("utf-8")
-    pdffile = app.config['PDF_FOLDER'] + 'demo.pdf'
-    pdfkit.from_string(args, 'demo.pdf', configuration=config)
+     content = request.form['xml']
+        filename = str(int(time.time())) + '.pdf'
+        options = {
+            'encoding': "UTF-8"
+        }
+        options["orientation"] = 'Landscape'
+
+        pdfkit.from_string(content, 'outPdf/' + filename, configuration=config, options=options)
+        try:
+            return send_file('outPdf/' + filename)
+        except Exception as e:
+            return str(e)
+
 
 
 if __name__ == '__main__':
